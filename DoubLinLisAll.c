@@ -3,35 +3,39 @@
 struct node
 {
     int data;
-    struct node* next;
+    struct node *prev,*next;
 };
+
 struct node* start=NULL;
 
 struct node* create_list(struct node* start)
 {
     int num;
-    struct node *ptr;
     printf("Enter -1 to EXIT\n");
     printf("Enter the data: ");
     scanf("%d",&num);
     while(num!=-1)
     {
-        struct node* new_node=(struct node*)malloc(sizeof(struct node));
-        new_node->data=num;
         if(start==NULL)
         {
-            new_node->next=new_node;
+            struct node* new_node=(struct node*)malloc(sizeof(struct node));
+            new_node->next=start;
+            new_node->data=num;
+            new_node->prev=start;
             start=new_node;
         }
         else
         {
-            ptr=start;
-            while(ptr->next!=start)
+            struct node* new_node=(struct node*)malloc(sizeof(struct node));
+            struct node* ptr=start;
+            while(ptr->next!=NULL)
             {
                 ptr=ptr->next;
             }
             ptr->next=new_node;
-            new_node->next=start;
+            new_node->next=NULL;
+            new_node->prev=ptr;
+            new_node->data=num;
         }
         printf("Enter the data: ");
         scanf("%d",&num);
@@ -39,56 +43,46 @@ struct node* create_list(struct node* start)
     return start;
 };
 
-
-struct node* insert_beg(struct node* start)
+struct node* delete_beg(struct node* start)
 {
-    int num;
-    struct node* new_node=(struct node*)malloc(sizeof(struct node));
-    struct node* ptr=start;
-    printf("Enter the data: ");
-    scanf("%d",&num);
-    new_node->data=num;
-    while(ptr->next!=start)
-    {
-        ptr=ptr->next;
-    }
-    new_node->next=start;
-    ptr->next=new_node;
-    start=new_node;
+    struct node *ptr;
+    ptr=start;
+    start=start->next;
+    start->prev=NULL;
+    free(ptr);
     return start;
 };
 
 void display(struct node* start)
 {
-    struct node* ptr;
-    ptr=start;
-    printf("The List is: ");
-    while(ptr->next!=start)
+    struct node* ptr=start;
+    while(ptr->next!=NULL)
     {
         printf("%d ",ptr->data);
         ptr=ptr->next;
     }
     printf("%d\n",ptr->data);
-    return;
 }
 
 int main()
 {
     int choice;
-    do{
-        printf("0.EXIT\n");
-        printf("1.Create List\n");
-        printf("2.Insert Beg\n");
-        printf("3.Insert End\n");
-        printf("Enter the choice: ");
-        scanf("%d",&choice);
+    printf("0. EXIT\n");
+    printf("1. Create List\n");
+    printf("2. Insert Beg\n");
+    printf("3. Insert End\n");
+    printf("4. Display\n");
+    printf("Enter your Choice: ");
+    scanf("%d",&choice);
+    do
+    {
         switch(choice)
         {
             case 1:
                 start=create_list(start);
                 break;
             case 2:
-                start=insert_beg(start);
+                start=delete_beg(start);
                 break;
             /*case 3:
                 start=insert_end(start);
@@ -97,8 +91,9 @@ int main()
                 display(start);
                 break;
         }
+        printf("Enter your Choice: ");
+        scanf("%d",&choice);
     }while(choice!=0);
-
 
     return 0;
 }
